@@ -1,12 +1,14 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pypdf import PdfReader
-from sentence_transformers import SentenceTransformer
 import google.generativeai as genai
 import io
 import os
 import faiss
 import numpy as np
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -22,11 +24,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#api key
+
+
+# #api key
 genai.configure(
     api_key=os.getenv("GEMINI_API_KEY")
 )#llm model
 llm = genai.GenerativeModel("gemini-3.1-flash-lite")
+
+# llm = None
 
 #embedding model
 model = None
@@ -47,6 +53,7 @@ async def upload_file(file: UploadFile = File(...)):
     global index, stored_chunks, model
 
     if model is None:
+        from sentence_transformers import SentenceTransformer
         model = SentenceTransformer("all-MiniLM-L6-v2")
 
     # Read uploaded file
