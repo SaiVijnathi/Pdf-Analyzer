@@ -15,7 +15,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-        "https://pdf-analyzer-xi-azure.vercel.app/"
+        "https://pdf-analyzer-xi-azure.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -29,7 +29,7 @@ genai.configure(
 llm = genai.GenerativeModel("gemini-3.1-flash-lite")
 
 #embedding model
-model = SentenceTransformer("all-MiniLM-L6-v2")
+model = None
 
 #global variables
 index = None
@@ -44,7 +44,10 @@ def root():
 @app.post("/upload_file")
 async def upload_file(file: UploadFile = File(...)):
 
-    global index, stored_chunks
+    global index, stored_chunks, model
+
+    if model is None:
+        model = SentenceTransformer("all-MiniLM-L6-v2")
 
     # Read uploaded file
     content = await file.read()
@@ -111,7 +114,7 @@ async def upload_file(file: UploadFile = File(...)):
 @app.post("/ask")
 async def ask_question(question: str):
 
-    global index, stored_chunks
+    global index, stored_chunks, model
 
     # Check if PDF uploaded first
     if index is None:
