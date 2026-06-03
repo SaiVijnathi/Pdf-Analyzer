@@ -4,6 +4,7 @@ from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer
 import google.generativeai as genai
 import io
+import os
 import faiss
 import numpy as np
 
@@ -11,15 +12,20 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://pdf-analyzer-xi-azure.vercel.app/"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 #api key
-genai.configure(api_key="AIzaSyDB7TKL2ov9IR692DJduVQvNTkGywH-fAI")
-#llm model
+genai.configure(
+    api_key=os.getenv("GEMINI_API_KEY")
+)#llm model
 llm = genai.GenerativeModel("gemini-3.1-flash-lite")
 
 #embedding model

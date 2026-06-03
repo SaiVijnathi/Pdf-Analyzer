@@ -1,6 +1,9 @@
 fastapi
 uvicorn
-langchain
-chromadb
-pydantic
 pypdf
+sentence-transformers
+google-generativeai
+faiss-cpu
+numpy
+python-multipart
+torch
